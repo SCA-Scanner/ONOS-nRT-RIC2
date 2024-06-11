@@ -20,7 +20,7 @@ jobs:
           'onos-e2t',
           'onos-kpimon',
           'onos-lib-go',
-          'onos-operator',
+          'onos-operator', 
           'onos-topo',
           'onos-uenib' 
         ] # Add all your directories here
