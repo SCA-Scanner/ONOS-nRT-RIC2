@@ -42,8 +42,8 @@ while IFS= read -r url; do
             echo "Subtree added successfully for URL: $url"
         fi
     fi
-git push 
 done < "$URLS_FILE"
-
+echo "Pushing all changes"
+git push 
 # Output final git status for debugging
 git status
