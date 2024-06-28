@@ -46,3 +46,14 @@ done < "$URLS_FILE"
 
 # Output final git status for debugging
 git status
+
+# Add all changes to the staging area
+git add -A
+
+# Check for changes and commit if there are any
+if ! git diff-index --quiet HEAD; then
+    git commit -m "Update subtrees"
+    git push origin main
+else
+    echo "No changes to commit."
+fi
