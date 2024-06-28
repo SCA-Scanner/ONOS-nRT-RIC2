@@ -12,6 +12,7 @@ if [ ! -f "$URLS_FILE" ]; then
     exit 1
 fi
 
+
 # Output current directory and git status for debugging
 echo "Current directory: $(pwd)"
 git status
