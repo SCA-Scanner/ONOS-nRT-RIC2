@@ -42,15 +42,8 @@ while IFS= read -r url; do
             echo "Subtree added successfully for URL: $url"
         fi
     fi
+git push 
 done < "$URLS_FILE"
 
 # Output final git status for debugging
 git status
-
-# Check for changes and commit if there are any
-if ! git diff-index --quiet HEAD; then
-    git commit -m "Update subtrees"
-    git push origin main
-else
-    echo "No changes to commit."
-fi
