@@ -43,7 +43,3 @@ while IFS= read -r url; do
         fi
     fi
 done < "$URLS_FILE"
-echo "Pushing all changes"
-git push 
-# Output final git status for debugging
-git status
