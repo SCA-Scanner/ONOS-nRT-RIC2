@@ -62,3 +62,4 @@ while IFS= read -r url; do
 done < "$URLS_FILE"
 git push  # Push the changes 
 echo "All subtrees updated successfully"
+git pull
