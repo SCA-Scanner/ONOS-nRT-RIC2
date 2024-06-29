@@ -1,7 +1,27 @@
 #!/bin/bash
 
-# Path to the text file containing remote repo URLs
-URLS_FILE="onos_links.txt"
+# Check if an argument is provided
+if [ -z "$1" ]; then
+    echo "Error: No argument provided. Please provide one of the following: onos, osc, aic"
+    exit 1
+fi
+
+# Determine the URLs file based on the argument
+case $1 in
+    onos)
+        URLS_FILE="onos_links.txt"
+        ;;
+    osc)
+        URLS_FILE="osc_links.txt"
+        ;;
+    aic)
+        URLS_FILE="aic_links.txt"
+        ;;
+    *)
+        echo "Error: Invalid argument. Please provide one of the following: onos, osc, aic"
+        exit 1
+        ;;
+esac
 
 # Remote branch
 REMOTE_BRANCH="master"
@@ -11,10 +31,6 @@ if [ ! -f "$URLS_FILE" ]; then
     echo "Error: URLs file not found: $URLS_FILE"
     exit 1
 fi
-
-# Output current directory and git status for debugging
-echo "Current directory: $(pwd)"
-git status
 
 # Loop through each URL in the file and run git subtree command
 while IFS= read -r url; do
@@ -41,13 +57,6 @@ while IFS= read -r url; do
             echo "Subtree added successfully for URL: $url"
         fi
     fi
-    # Push subtree changes
     echo "Pushing subtree changes for URL: $url"
-    git subtree push --prefix "$local_dir" "$url" "$REMOTE_BRANCH"
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to push subtree changes for URL: $url"
-        exit 1  # Exit with error if subtree push fails
-    else
-        echo "Subtree changes pushed successfully for URL: $url"
-    fi
+    git subtree push --prefix "$local_dir" "$url" main
 done < "$URLS_FILE"

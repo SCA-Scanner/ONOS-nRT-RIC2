@@ -6,57 +6,33 @@ on:
     branches: [ "main" ]
 
 jobs:
-  sync-subtrees:
+  update-repo:
     runs-on: ubuntu-latest
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+    - name: Checkout source
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
-      - name: Set up Git
-        run: |
-          git config --global user.name "${{ secrets.GIT_USERNAME }}"
-          git config --global user.email "${{ secrets.GIT_EMAIL }}"
-  
+    - name: Set up Git
+      run: |
+        git config --global user.name "${{ secrets.GIT_USERNAME }}"
+        git config --global user.email "${{ secrets.GIT_EMAIL }}"
 
-      - name: Check if URLs file exists
-        run: |
-          if [ ! -f "onos_links.txt" ]; then
-            echo "Error: URLs file not found: onos_links.txt"
-            exit 1
-          fi
+    - name: Make the script executable
+      run: chmod +x update_repo.sh
 
-      - name: Process Git Subtrees
-        run: |
-            while IFS= read -r url; do
-            # Extract the last part of the URL to use as the local directory name
-              local_dir=$(basename "$url" .git)
+    - name: Run update_repo.sh
+      run: ./update_repo.sh onos  # Change 'osc' to 'onos' or 'aic' as needed
 
-              echo "Processing subtree for URL: $url"
-
-                # Check if the directory already exists
-                if [ -d "$local_dir" ]; then
-                    echo "Directory $local_dir already exists. Updating subtree..."
-                    git subtree pull --prefix "$local_dir" "$url" "$REMOTE_BRANCH" --squash
-                    if [ $? -ne 0 ]; then
-                        echo "Error: Failed to update subtree for URL: $url"
-                    else
-                        echo "Subtree updated successfully for URL: $url"
-                    fi
-                else
-                    echo "Adding new subtree..."
-                    git subtree add --prefix "$local_dir" "$url" "$REMOTE_BRANCH" --squash
-                    if [ $? -ne 0 ]; then
-                        echo "Error: Failed to add subtree for URL: $url"
-                    else
-                        echo "Subtree added successfully for URL: $url"
-                    fi
-                fi
-            done < onos_links.txt
-    
   Grype-Scan:
-    needs: sync-subtrees
+    needs: update-repo
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
