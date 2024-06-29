@@ -27,10 +27,12 @@ jobs:
 
     - name: Make the script executable
       run: chmod +x update_repo.sh
-
+      
     - name: Run update_repo.sh
       run: ./update_repo.sh onos  # Change 'osc' to 'onos' or 'aic' as needed
-
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
   Grype-Scan:
     needs: update-repo
     permissions:
