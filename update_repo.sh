@@ -12,7 +12,6 @@ if [ ! -f "$URLS_FILE" ]; then
     exit 1
 fi
 
-
 # Output current directory and git status for debugging
 echo "Current directory: $(pwd)"
 git status
@@ -41,5 +40,14 @@ while IFS= read -r url; do
         else
             echo "Subtree added successfully for URL: $url"
         fi
+    fi
+    # Push subtree changes
+    echo "Pushing subtree changes for URL: $url"
+    git subtree push --prefix "$local_dir" "$url" "$REMOTE_BRANCH"
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to push subtree changes for URL: $url"
+        exit 1  # Exit with error if subtree push fails
+    else
+        echo "Subtree changes pushed successfully for URL: $url"
     fi
 done < "$URLS_FILE"
