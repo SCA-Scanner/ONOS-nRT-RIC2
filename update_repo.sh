@@ -60,3 +60,5 @@ while IFS= read -r url; do
     echo "Pushing subtree changes for URL: $url"
     git subtree push --prefix "$local_dir" "$url" main
 done < "$URLS_FILE"
+git push  # Push the changes 
+echo "All subtrees updated successfully"
